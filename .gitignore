@@ -37,3 +37,7 @@ out/
 .vscode/
 *.html
 *.css
+*.woff
+*.woff2
+*.svg
+/src/main/resources/static/
