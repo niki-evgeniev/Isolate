@@ -16,7 +16,10 @@ spring:
     init:
       mode: never
   thymeleaf:
-    check-template: false
+    cache: false
+    mode: HTML
+    encoding: UTF-8
+    prefix: file:src/main/resources/templates/
   jpa:
     hibernate:
       ddl-auto: update
