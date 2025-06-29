@@ -28,7 +28,7 @@ spring:
       hibernate:
         format_sql: true
     defer-datasource-initialization: true
-carpmap:
+isolate:
   remember.me.key: 1234
 logging:
   level:
@@ -38,6 +38,7 @@ logging:
 #    org.apache.coyote.http11.Http11Processor: DEBUG
 #    org.apache.tomcat.util.net: DEBUG
 
-
+server:
+  port: 8080
 
 
