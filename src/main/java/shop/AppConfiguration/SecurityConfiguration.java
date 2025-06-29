@@ -26,8 +26,8 @@ public class SecurityConfiguration {
                 authorizeRequest -> authorizeRequest
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/fonts/**", "/images/**", "/js/**", "/php/**",
-                                "/plugins/**", "/vendor/**", "/css/**", "/sign_in").permitAll()
-                        .requestMatchers("/", "/contact").permitAll()
+                                "/plugins/**", "/vendor/**", "/css/**" ).permitAll()
+                        .requestMatchers("/", "/contact", "/sign_in", "/store").permitAll()
                         .anyRequest().authenticated()
 
         ).formLogin(
