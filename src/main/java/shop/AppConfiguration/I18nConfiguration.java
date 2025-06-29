@@ -18,7 +18,7 @@ public class I18nConfiguration {
     @Bean
     public LocaleResolver localeResolver() {
         CookieLocaleResolver localeResolver = new CookieLocaleResolver();
-        localeResolver.setDefaultLocale(new Locale("bg"));
+        localeResolver.setDefaultLocale(Locale.forLanguageTag("bg"));
         localeResolver.setCookieMaxAge(Duration.ofDays(365));
         return localeResolver;
     }
