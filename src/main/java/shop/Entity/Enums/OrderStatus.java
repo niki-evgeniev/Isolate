@@ -1,4 +1,4 @@
-package shop.Entity;
+package shop.Entity.Enums;
 
 public enum OrderStatus {
     PENDING,
