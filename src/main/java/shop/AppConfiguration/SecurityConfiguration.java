@@ -6,7 +6,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import shop.Repository.UserRepository;
+import shop.Service.Impl.ShopUserService;
 
 @Configuration
 @EnableMethodSecurity
@@ -26,8 +31,9 @@ public class SecurityConfiguration {
                 authorizeRequest -> authorizeRequest
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/fonts/**", "/images/**", "/js/**", "/php/**",
-                                "/plugins/**", "/vendor/**", "/css/**" ).permitAll()
-                        .requestMatchers("/", "/contact", "/sign_in", "/store").permitAll()
+                                "/plugins/**", "/vendor/**", "/css/**").permitAll()
+                        .requestMatchers("/", "/contact", "/sign_in", "/store"
+                        ).permitAll()
                         .anyRequest().authenticated()
 
         ).formLogin(
@@ -36,7 +42,7 @@ public class SecurityConfiguration {
                             .loginPage("/sign_in")
                             .usernameParameter("email")
                             .passwordParameter("password")
-                            .defaultSuccessUrl("/dashboard", true)
+                            .defaultSuccessUrl("/", true)
                             .failureForwardUrl("/login-error");
                 }
         ).logout(
@@ -55,5 +61,15 @@ public class SecurityConfiguration {
                 }
         );
         return httpSecurity.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8();
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService(UserRepository userRepository) {
+        return new ShopUserService(userRepository);
     }
 }
