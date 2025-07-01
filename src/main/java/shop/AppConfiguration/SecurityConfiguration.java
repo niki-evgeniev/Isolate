@@ -30,10 +30,10 @@ public class SecurityConfiguration {
         httpSecurity.authorizeHttpRequests(
                 authorizeRequest -> authorizeRequest
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers("/fonts/**", "/images/**", "/js/**", "/php/**",
-                                "/plugins/**", "/vendor/**", "/css/**").permitAll()
-                        .requestMatchers("/", "/contact", "/sign_in", "/store"
-                        ).permitAll()
+                        .requestMatchers("/css/**", "/fonts/**", "/images/**", "/js/**", "/php/**",
+                                "/plugins/**", "/vendor/**").permitAll()
+                        .requestMatchers("/robots.txt").permitAll()
+                        .requestMatchers("/", "/contact", "/sign_in", "/store").permitAll()
                         .anyRequest().authenticated()
 
         ).formLogin(
