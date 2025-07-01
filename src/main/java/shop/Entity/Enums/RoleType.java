@@ -1,10 +1,9 @@
 package shop.Entity.Enums;
 
 public enum RoleType {
-
-    ADMIN,
+    USER,
 
     MODERATOR,
 
-    USER,
+    ADMIN,
 }
