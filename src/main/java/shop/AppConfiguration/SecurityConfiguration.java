@@ -32,10 +32,16 @@ public class SecurityConfiguration {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/css/**", "/fonts/**", "/images/**", "/js/**", "/php/**",
                                 "/plugins/**", "/vendor/**").permitAll()
-                        .requestMatchers("/robots.txt").permitAll()
-                        .requestMatchers("/", "/contact", "/sign_in", "/store").permitAll()
+                        .requestMatchers("/robots.txt", "/e990d0e67fd55618c760bacbde63668f.txt").permitAll()
+                        .requestMatchers("/", "/contact", "/sign_in", "/store",
+                                "/api/***", "/test").permitAll()
                         .anyRequest().authenticated()
 
+        ).csrf(csrf -> csrf
+                .requireCsrfProtectionMatcher(request -> {
+                    String path = request.getServletPath();
+                    return !path.startsWith("/api/");
+                })
         ).formLogin(
                 formLogin -> {
                     formLogin
