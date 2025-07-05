@@ -20,7 +20,8 @@ public class EmailRestController {
     public String sendTestEmail(@RequestBody EmailRequestDTO dto) {
         boolean result = mailjetService.sendEmail(dto);
         System.out.println("EMAIL");
-        return result ? "Имейлът е изпратен успешно!" : "Неуспешно изпращане на имейл.";
+        return result ? "Имейлът е изпратен успешно!"
+                      : "Неуспешно изпращане на имейл.";
     }
 
     @GetMapping("/test")

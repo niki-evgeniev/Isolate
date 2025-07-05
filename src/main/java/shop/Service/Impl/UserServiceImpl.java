@@ -40,6 +40,11 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public boolean checkEmailExist(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
     private static User mapAdminUser(String encodePassword, List<UserRole> allRoles) {
         User user = new User();
         user.setEmail("admin@admin");
