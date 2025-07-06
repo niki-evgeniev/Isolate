@@ -19,16 +19,16 @@ public class RegisterController {
         this.userService = userService;
     }
 
-    @GetMapping("/register")
-    public ModelAndView register(){
-        System.out.println("login controller");
-        boolean register = true;
-        ModelAndView modelAndView = new ModelAndView("register");
-        modelAndView.addObject("registerTab", register);
-        return modelAndView;
-    }
+//    @GetMapping("/register")
+//    public ModelAndView register(){
+//        System.out.println("login controller");
+//        boolean register = true;
+//        ModelAndView modelAndView = new ModelAndView("register");
+//        modelAndView.addObject("registerTab", register);
+//        return modelAndView;
+//    }
 
-    @PostMapping("/user/signUp")
+    @PostMapping("/user/sign_up")
     public ModelAndView sign_up(@Valid RegisterUserDTO registerUserDTO,
                                 BindingResult bindingResult) {
 
@@ -40,7 +40,7 @@ public class RegisterController {
             System.out.println();
             return new ModelAndView("redirect:/");
         }
-        ModelAndView modelAndView = new ModelAndView("sign_in");
+        ModelAndView modelAndView = new ModelAndView("sign_in OLD");
         if (!passwordCheck){
             bindingResult.rejectValue("confirmPassword", "passwordNotMatch");
         }
