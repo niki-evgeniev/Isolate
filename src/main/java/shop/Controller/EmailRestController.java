@@ -16,13 +16,13 @@ public class EmailRestController {
         this.mailjetService = mailjetService;
     }
 
-    @PostMapping("/send")
-    public String sendTestEmail(@RequestBody EmailRequestDTO dto) {
-        boolean result = mailjetService.sendEmail(dto);
-        System.out.println("EMAIL");
-        return result ? "Имейлът е изпратен успешно!"
-                      : "Неуспешно изпращане на имейл.";
-    }
+//    @PostMapping("/send")
+//    public String sendTestEmail(@RequestBody EmailRequestDTO dto) {
+//        boolean result = mailjetService.sendEmail(dto);
+//        System.out.println("EMAIL");
+//        return result ? "Имейлът е изпратен успешно!"
+//                      : "Неуспешно изпращане на имейл.";
+//    }
 
     @GetMapping("/test")
     public String test() {
