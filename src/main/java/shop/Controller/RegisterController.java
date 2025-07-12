@@ -3,7 +3,6 @@ package shop.Controller;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,15 +18,6 @@ public class RegisterController {
         this.userService = userService;
     }
 
-//    @GetMapping("/register")
-//    public ModelAndView register(){
-//        System.out.println("login controller");
-//        boolean register = true;
-//        ModelAndView modelAndView = new ModelAndView("register");
-//        modelAndView.addObject("registerTab", register);
-//        return modelAndView;
-//    }
-
     @PostMapping("/user/sign_up")
     public ModelAndView sign_up(@Valid RegisterUserDTO registerUserDTO,
                                 BindingResult bindingResult) {
@@ -35,21 +25,24 @@ public class RegisterController {
         boolean emailCheck = userService.checkEmailExist(registerUserDTO.getEmail());
         boolean passwordCheck = registerUserDTO.getPassword().equals(registerUserDTO.getConfirmPassword());
         boolean isValidUserRegistration = !emailCheck && passwordCheck && !bindingResult.hasErrors();
+
         if (isValidUserRegistration) {
-//           userService.registerNewUser(registerUserDTO);
-            System.out.println();
-            return new ModelAndView("redirect:/");
+            boolean isRegisterNewUSer = userService.registerNewUser(registerUserDTO);
+            if (isRegisterNewUSer) {
+                return new ModelAndView("redirect:/");
+            }
         }
-        ModelAndView modelAndView = new ModelAndView("sign_in OLD");
-        if (!passwordCheck){
+        ModelAndView modelAndView = new ModelAndView("login");
+        if (!passwordCheck) {
             bindingResult.rejectValue("confirmPassword", "passwordNotMatch");
+            System.out.println("Confirm password not match");
         }
-        if (emailCheck){
+        if (emailCheck) {
             bindingResult.rejectValue("email", "registerEmailExist");
+            System.out.println("Email exist in DB");
         }
         boolean register = true;
         modelAndView.addObject("registerTab", register);
-        System.out.println("email exist");
         return modelAndView;
     }
 
