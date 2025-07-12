@@ -30,6 +30,12 @@ public class User extends BaseEntity {
     @Column(name = "edit_date", columnDefinition = "DATETIME(0)")
     private LocalDateTime editDate;
 
+    @Column(name = "verification_token")
+    private String verificationToken;
+
+    @Column(name = "is_activate")
+    private boolean isActivate = false;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
@@ -46,6 +52,22 @@ public class User extends BaseEntity {
 
     public void setEditDate(LocalDateTime editDate) {
         this.editDate = editDate;
+    }
+
+    public String getVerificationToken() {
+        return verificationToken;
+    }
+
+    public void setVerificationToken(String verificationToken) {
+        this.verificationToken = verificationToken;
+    }
+
+    public boolean isActivate() {
+        return isActivate;
+    }
+
+    public void setActivate(boolean activate) {
+        isActivate = activate;
     }
 
     public String getEmail() {
