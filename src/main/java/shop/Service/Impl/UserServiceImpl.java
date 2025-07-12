@@ -1,7 +1,11 @@
 package shop.Service.Impl;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import shop.DTO.EmailRequestDTO;
+import shop.DTO.UserDto.RegisterUserDTO;
+import shop.Entity.Enums.RoleType;
 import shop.Entity.User;
 import shop.Entity.UserRole;
 import shop.Repository.UserRepository;
@@ -10,6 +14,8 @@ import shop.Service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -17,12 +23,17 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserRoleRepository userRoleRepository;
+    private final MailjetService mailjetService;
+
+    @Value("${isolate.base-url}")
+    private String baseUrl;
 
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                           UserRoleRepository userRoleRepository) {
+                           UserRoleRepository userRoleRepository, MailjetService mailjetService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.userRoleRepository = userRoleRepository;
+        this.mailjetService = mailjetService;
     }
 
     @Override
@@ -45,6 +56,51 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByEmail(email);
     }
 
+    @Override
+    public boolean registerNewUser(RegisterUserDTO registerUserDTO) {
+        Optional<User> findByEmail = userRepository.findByEmail(registerUserDTO.getEmail());
+        boolean isRegisterNewUser = false;
+        String verificationToken = UUID.randomUUID().toString();
+
+        if (findByEmail.isEmpty()) {
+            User user = new User();
+            user.setActivate(false);
+            user.setRegisterDate(LocalDateTime.now());
+            user.setEmail(registerUserDTO.getEmail());
+            String encodePassword = passwordEncoder.encode(registerUserDTO.getPassword());
+            user.setPassword(encodePassword);
+            List<UserRole> getRoleUser = userRoleRepository.findByRoleType(RoleType.USER);
+            user.setRoles(getRoleUser);
+            user.setVerificationToken(verificationToken);
+            userRepository.save(user);
+
+            System.out.println("Successful register user with Email " + registerUserDTO.getEmail());
+            isRegisterNewUser = true;
+        }
+
+        String verificationUrl = baseUrl + "/verify?token=" + verificationToken;
+        if (isRegisterNewUser) {
+            EmailRequestDTO emailRequestDTO = new EmailRequestDTO();
+            emailRequestDTO.setToEmail(registerUserDTO.getEmail());
+            emailRequestDTO.setSubject("Регистрация нов потребител");
+            emailRequestDTO.setHtmlContent("""
+                    <h1>Добре дошъл!</h1>
+                    <p>Регистрирахте нов потребител с имейл: <strong>%s</strong></p>
+                    <p>Кликнете на този линк, за да активирате акаунта си: <a href="%s">Потвърди акаунта</a></p>
+                    """
+                    .formatted(registerUserDTO.getEmail(), verificationUrl));
+
+            emailRequestDTO.setTextContent("Регистрирахте се в Isolate.bg. Потвърдете имейла си чрез този линк: "
+                    + verificationUrl);
+            emailRequestDTO.setToName(registerUserDTO.getEmail());
+            boolean isEmailSend = mailjetService.sendEmailRegisterUser(emailRequestDTO);
+            System.out.println("Email confirm is " + isEmailSend);
+            return true;
+        }
+
+        return false;
+    }
+
     private static User mapAdminUser(String encodePassword, List<UserRole> allRoles) {
         User user = new User();
         user.setEmail("admin@admin");
@@ -53,6 +109,7 @@ public class UserServiceImpl implements UserService {
         user.setLastName("Adminov");
         user.setRegisterDate(LocalDateTime.now());
         user.setRoles(allRoles);
+        user.setActivate(true);
         return user;
     }
 
@@ -64,6 +121,7 @@ public class UserServiceImpl implements UserService {
         normalUser.setLastName("Userov");
         normalUser.setRegisterDate(LocalDateTime.now());
         normalUser.setRoles(List.of(allRoles.getFirst()));
+        normalUser.setActivate(true);
         return normalUser;
     }
 }
