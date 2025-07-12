@@ -10,10 +10,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
-import org.springframework.security.web.context.SecurityContextPersistenceFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import shop.Repository.UserRepository;
 import shop.Service.Impl.ShopUserService;
 
@@ -40,12 +36,9 @@ public class SecurityConfiguration {
                         .requestMatchers("/robots.txt").permitAll()
                         .requestMatchers("/", "/contact", "/user/sign_in", "/store",
                                 "/api/***", "/user/sign_up","/users/login", "/register",
-                                "/users/login-error", "/users/logout").permitAll()
+                                "/users/login-error", "/users/logout",
+                                "/verify", "/verify/**").permitAll()
                         .anyRequest().authenticated()
-//        ).csrf(csrf -> csrf
-//                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-//                .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
-
         ).formLogin(
                 formLogin -> {
                     formLogin
