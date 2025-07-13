@@ -29,8 +29,6 @@ spring:
       hibernate:
         format_sql: true
     defer-datasource-initialization: true
-  profiles:
-    active: dev
 isolate:
   remember.me.key: 1234
   base-url: http://localhost:8080
