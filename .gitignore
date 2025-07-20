@@ -41,3 +41,4 @@ out/
 *.woff2
 *.svg
 /src/main/resources/static/
+/imagesApp/
