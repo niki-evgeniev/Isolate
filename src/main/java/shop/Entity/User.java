@@ -34,7 +34,11 @@ public class User extends BaseEntity {
     private String verificationToken;
 
     @Column(name = "is_activate")
-    private boolean isActivate = false;
+//    @Access(AccessType.FIELD)
+    private boolean activate = false;
+
+    @Column(name = "token_created", columnDefinition = "DATETIME(0)")
+    private LocalDateTime tokenCreated;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -63,11 +67,19 @@ public class User extends BaseEntity {
     }
 
     public boolean isActivate() {
-        return isActivate;
+        return activate;
     }
 
     public void setActivate(boolean activate) {
-        isActivate = activate;
+        this.activate = activate;
+    }
+
+    public LocalDateTime getTokenCreated() {
+        return tokenCreated;
+    }
+
+    public void setTokenCreated(LocalDateTime tokenCreated) {
+        this.tokenCreated = tokenCreated;
     }
 
     public String getEmail() {
