@@ -72,13 +72,14 @@ public class UserServiceImpl implements UserService {
             List<UserRole> getRoleUser = userRoleRepository.findByRoleType(RoleType.USER);
             user.setRoles(getRoleUser);
             user.setVerificationToken(verificationToken);
+            user.setTokenCreated(LocalDateTime.now());
             userRepository.save(user);
 
             System.out.println("Successful register user with Email " + registerUserDTO.getEmail());
             isRegisterNewUser = true;
         }
 
-        String verificationUrl = baseUrl + "/verify?token=" + verificationToken;
+        String verificationUrl = baseUrl + "/user/verify?token=" + verificationToken;
         if (isRegisterNewUser) {
             EmailRequestDTO emailRequestDTO = new EmailRequestDTO();
             emailRequestDTO.setToEmail(registerUserDTO.getEmail());
@@ -86,9 +87,9 @@ public class UserServiceImpl implements UserService {
             emailRequestDTO.setHtmlContent("""
                     <h1>Добре дошъл!</h1>
                     <p>Регистрирахте нов потребител с имейл: <strong>%s</strong></p>
-                    <p>Кликнете на този линк, за да активирате акаунта си: <a href="%s">Потвърди акаунта</a></p>
+                    <p>Кликнете на този линк, за да активирате акаунта си: <a href="%s">%s</a></p>
                     """
-                    .formatted(registerUserDTO.getEmail(), verificationUrl));
+                    .formatted(registerUserDTO.getEmail(), verificationUrl, verificationUrl));
 
             emailRequestDTO.setTextContent("Регистрирахте се в Isolate.bg. Потвърдете имейла си чрез този линк: "
                     + verificationUrl);
@@ -98,6 +99,21 @@ public class UserServiceImpl implements UserService {
             return true;
         }
 
+        return false;
+    }
+
+    @Override
+    public boolean verifyUser(String token) {
+        if (token != null && !token.isBlank()) {
+            Optional<User> userVerification = userRepository.findByVerificationToken(token);
+            if (userVerification.isPresent()) {
+                User user = userVerification.get();
+                user.setVerificationToken(null);
+                user.setActivate(true);
+                userRepository.save(user);
+                return true;
+            }
+        }
         return false;
     }
 

@@ -10,4 +10,6 @@ public interface UserService {
     boolean checkEmailExist(String email);
 
     boolean registerNewUser(RegisterUserDTO registerUserDTO);
+
+    boolean verifyUser(String token);
 }
