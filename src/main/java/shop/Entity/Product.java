@@ -9,22 +9,28 @@ import java.math.BigDecimal;
 
 @Table
 @Entity(name = "products")
-public class Product extends  BaseEntity{
+public class Product extends  BaseEntity {
 
     @Column(name = "name")
     private String name;
 
-    @Column(name = "description")
+    @Column(name = "model")
+    private String model;
+
+    @Column(name = "english_name")
+    private String englishName;
+
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "price")
-    private BigDecimal price;
+    @Column(name = "price_bgn")
+    private BigDecimal priceBgn;
+
+    @Column(name = "price_euro")
+    private BigDecimal priceEuro;
 
     @Column(name = "stock")
-    private int stock; // наличност
-
-    @Column(name = "imageUrl")
-    private String imageUrl;
+    private int stock;
 
     @ManyToOne
     private Category category;
@@ -48,12 +54,20 @@ public class Product extends  BaseEntity{
         this.description = description;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getEnglishName() {
+        return englishName;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setEnglishName(String englishName) {
+        this.englishName = englishName;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
     }
 
     public String getName() {
@@ -64,12 +78,20 @@ public class Product extends  BaseEntity{
         this.name = name;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public BigDecimal getPriceBgn() {
+        return priceBgn;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    public void setPriceBgn(BigDecimal priceBgn) {
+        this.priceBgn = priceBgn;
+    }
+
+    public BigDecimal getPriceEuro() {
+        return priceEuro;
+    }
+
+    public void setPriceEuro(BigDecimal priceEuro) {
+        this.priceEuro = priceEuro;
     }
 
     public int getStock() {
