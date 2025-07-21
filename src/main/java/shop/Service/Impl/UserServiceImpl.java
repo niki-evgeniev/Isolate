@@ -73,6 +73,7 @@ public class UserServiceImpl implements UserService {
             user.setRoles(getRoleUser);
             user.setVerificationToken(verificationToken);
             user.setTokenCreated(LocalDateTime.now());
+            user.setUuid(UUID.randomUUID());
             userRepository.save(user);
 
             System.out.println("Successful register user with Email " + registerUserDTO.getEmail());
@@ -126,6 +127,7 @@ public class UserServiceImpl implements UserService {
         user.setRegisterDate(LocalDateTime.now());
         user.setRoles(allRoles);
         user.setActivate(true);
+        user.setUuid(UUID.randomUUID());
         return user;
     }
 
@@ -138,6 +140,7 @@ public class UserServiceImpl implements UserService {
         normalUser.setRegisterDate(LocalDateTime.now());
         normalUser.setRoles(List.of(allRoles.getFirst()));
         normalUser.setActivate(true);
+        normalUser.setUuid(UUID.randomUUID());
         return normalUser;
     }
 }
