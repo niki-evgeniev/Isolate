@@ -5,10 +5,14 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Table
 @Entity(name = "users")
 public class User extends BaseEntity {
+    @Column(name = "uuid")
+    private UUID uuid;
+
     @Column(name = "email")
     private String email;
 
@@ -48,6 +52,14 @@ public class User extends BaseEntity {
     private List<UserRole> roles = new ArrayList<>();
 
     public User() {
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 
     public LocalDateTime getEditDate() {
