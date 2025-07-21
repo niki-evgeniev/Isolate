@@ -36,7 +36,9 @@ public class SecurityConfiguration {
                         .requestMatchers("/robots.txt").permitAll()
                         .requestMatchers("/", "/contact", "/user/sign_in", "/store",
                                 "/api/***", "/user/sign_up","/users/login", "/register",
-                                "/users/login-error", "/users/logout","/user/verify").permitAll()
+                                "/users/login-error", "/users/logout","/user/verify",
+                                "/test", "/product/add").permitAll()
+                        .requestMatchers("/imagesApp/**").permitAll()
                         .anyRequest().authenticated()
         ).formLogin(
                 formLogin -> {
