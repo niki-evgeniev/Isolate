@@ -1,8 +1,12 @@
 package shop.Service.Impl;
 
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import shop.DTO.Porduct.AddProductDTO;
+import shop.DTO.Porduct.ListAllProductDTO;
 import shop.Entity.Picture;
 import shop.Entity.Product;
 import shop.Repository.PictureRepository;
@@ -10,15 +14,14 @@ import shop.Repository.ProductRepository;
 import shop.Service.ProductService;
 import shop.Util.ConvertorBgToEn;
 
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -27,12 +30,14 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final PictureRepository pictureRepository;
     private final ConvertorBgToEn convertorBgToEn;
+    private final ModelMapper modelMapper;
 
     public ProductServiceImpl(ProductRepository productRepository, PictureRepository pictureRepository,
-                              ConvertorBgToEn convertorBgToEn) {
+                              ConvertorBgToEn convertorBgToEn, ModelMapper modelMapper) {
         this.productRepository = productRepository;
         this.pictureRepository = pictureRepository;
         this.convertorBgToEn = convertorBgToEn;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -81,6 +86,36 @@ public class ProductServiceImpl implements ProductService {
                 }
             }
         }
+    }
+
+    @Override
+    public Page<ListAllProductDTO> listAllProduct(Pageable pageable) {
+        Page<Product> findAll = productRepository.findAll(pageable);
+        List<Picture> all = pictureRepository.findAll();
+        Page<ListAllProductDTO> dtoFindAll = findAll.map(
+                product -> {
+                    return modelMapper.map(product, ListAllProductDTO.class);
+                }
+        );
+
+        Map<Long, List<String>> productImagesMap = new HashMap<>();
+
+        for (Picture picture : all) {
+            long productId = picture.getProduct().getId();
+            productImagesMap
+                    .computeIfAbsent(productId, k -> new ArrayList<>())
+                    .add(picture.getImagePath());
+        }
+
+        for (ListAllProductDTO dto : dtoFindAll.getContent()) {
+            List<String> images = productImagesMap.getOrDefault(dto.getId(), List.of());
+
+            if (images.size() > 0) dto.setImageFile1(images.get(0));
+            if (images.size() > 1) dto.setImageFile2(images.get(1));
+            if (images.size() > 2) dto.setImageFile3(images.get(2));
+            if (images.size() > 3) dto.setImageFile4(images.get(3));
+        }
+        return dtoFindAll;
     }
 
     private String getPicturePath(MultipartFile pictureFile, String username) {
