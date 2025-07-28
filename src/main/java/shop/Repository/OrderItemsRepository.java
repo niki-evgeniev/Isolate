@@ -7,5 +7,5 @@ import shop.Entity.OrderItems;
 import java.util.UUID;
 
 @Repository
-public interface OrderItemsRepository extends JpaRepository<OrderItems, UUID> {
+public interface OrderItemsRepository extends JpaRepository<OrderItems, Long> {
 }
