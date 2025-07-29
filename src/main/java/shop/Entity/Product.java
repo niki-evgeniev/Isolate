@@ -32,6 +32,9 @@ public class Product extends  BaseEntity {
     @Column(name = "stock")
     private int stock;
 
+    @Column(name = "sold")
+    private int sold;
+
     @ManyToOne
     private Category category;
 
@@ -100,5 +103,13 @@ public class Product extends  BaseEntity {
 
     public void setStock(int stock) {
         this.stock = stock;
+    }
+
+    public int getSold() {
+        return sold;
+    }
+
+    public void setSold(int sold) {
+        this.sold = sold;
     }
 }
