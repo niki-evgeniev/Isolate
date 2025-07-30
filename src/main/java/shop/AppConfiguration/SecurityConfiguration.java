@@ -34,10 +34,11 @@ public class SecurityConfiguration {
                         .requestMatchers("/css/**", "/fonts/**", "/images/**", "/php/**",
                                 "/plugins/**", "/vendor/**").permitAll()
                         .requestMatchers("/robots.txt").permitAll()
-                        .requestMatchers("/", "/contact", "/user/sign_in", "/store",
+                        .requestMatchers("/", "/contact", "/user/sign_in",
                                 "/api/***", "/user/sign_up","/users/login", "/register",
                                 "/users/login-error", "/users/logout","/user/verify",
                                 "/test", "/product/add").permitAll()
+                        .requestMatchers("/store", "/store/details/{url}").permitAll()
                         .requestMatchers("/imagesApp/**").permitAll()
                         .anyRequest().authenticated()
         ).formLogin(
