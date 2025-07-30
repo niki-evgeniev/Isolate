@@ -20,6 +20,9 @@ public class Product extends  BaseEntity {
     @Column(name = "english_name")
     private String englishName;
 
+    @Column(name = "url")
+    private String url;
+
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
@@ -63,6 +66,14 @@ public class Product extends  BaseEntity {
 
     public void setEnglishName(String englishName) {
         this.englishName = englishName;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getModel() {
