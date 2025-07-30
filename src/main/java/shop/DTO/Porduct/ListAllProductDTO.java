@@ -9,6 +9,7 @@ public class ListAllProductDTO {
     private long id;
     private String name;
     private String model;
+    private String url;
     private String description;
     private BigDecimal priceBgn;
     private BigDecimal priceEuro;
@@ -38,6 +39,14 @@ public class ListAllProductDTO {
 
     public String getModel() {
         return model;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public void setModel(String model) {
