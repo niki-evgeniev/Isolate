@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import shop.DTO.Porduct.AddProductDTO;
+import shop.DTO.Porduct.DetailsProductDTO;
 import shop.DTO.Porduct.ListAllProductDTO;
 import shop.Entity.Picture;
 import shop.Entity.Product;
@@ -46,7 +47,10 @@ public class ProductServiceImpl implements ProductService {
         List<MultipartFile> imageFiles = List.of(
                 addProductDTO.getImageFile1(), addProductDTO.getImageFile2(),
                 addProductDTO.getImageFile3(), addProductDTO.getImageFile4());
-        String englishName = convertorBgToEn.convertCyrillicToLatin(addProductDTO.getName());
+        String englishName = convertorBgToEn.convertCyrillicToLatin(addProductDTO.getName().toLowerCase());
+        String url = convertorBgToEn.convertCyrillicToLatin(
+                addProductDTO.getName().toLowerCase() + " " + addProductDTO.getModel().toLowerCase());
+
         Product product = new Product();
         product.setName(addProductDTO.getName());
         product.setModel(addProductDTO.getModel());
@@ -56,7 +60,8 @@ public class ProductServiceImpl implements ProductService {
                 .divide(BigDecimal.valueOf(1.95583), 2, RoundingMode.CEILING);
         product.setPriceEuro(priceEuro);
         product.setEnglishName(englishName);
-        productRepository.save(product);
+        product.setUrl(url);
+//        productRepository.save(product);
         System.out.println("Added product with name" + addProductDTO.getName());
         for (MultipartFile imageFile : imageFiles) {
             if (!imageFile.isEmpty()) {
@@ -97,7 +102,7 @@ public class ProductServiceImpl implements ProductService {
                     return modelMapper.map(product, ListAllProductDTO.class);
                 }
         );
-
+        System.out.println();
         Map<Long, List<String>> productImagesMap = new HashMap<>();
 
         for (Picture picture : all) {
@@ -111,11 +116,45 @@ public class ProductServiceImpl implements ProductService {
             List<String> images = productImagesMap.getOrDefault(dto.getId(), List.of());
 
             if (images.size() > 0) dto.setImageFile1(images.get(0));
-            if (images.size() > 1) dto.setImageFile2(images.get(1));
-            if (images.size() > 2) dto.setImageFile3(images.get(2));
-            if (images.size() > 3) dto.setImageFile4(images.get(3));
+//            if (images.size() > 1) dto.setImageFile2(images.get(1));
+//            if (images.size() > 2) dto.setImageFile3(images.get(2));
+//            if (images.size() > 3) dto.setImageFile4(images.get(3));
         }
         return dtoFindAll;
+    }
+
+    @Override
+    public long countProducts() {
+        return productRepository.count();
+    }
+
+    @Override
+    public DetailsProductDTO getDetails(String url) {
+        Optional<Product> getProduct = productRepository.findByUrl(url);
+
+        if (getProduct.isPresent()) {
+            DetailsProductDTO detailsProductDTO = modelMapper.map(getProduct, DetailsProductDTO.class);
+            List<Picture> picturesProduct = pictureRepository.findAllByProductId(getProduct.get().getId());
+
+            if (!picturesProduct.isEmpty()) {
+                detailsProductDTO.setImageFile1(picturesProduct.get(0).getImagePath());
+            }
+            if (picturesProduct.size() > 1) {
+                detailsProductDTO.setImageFile2(picturesProduct.get(1).getImagePath());
+            }
+            if (picturesProduct.size() > 2) {
+                detailsProductDTO.setImageFile3(picturesProduct.get(2).getImagePath());
+            }
+            if (picturesProduct.size() > 3) {
+                detailsProductDTO.setImageFile4(picturesProduct.get(3).getImagePath());
+            }
+
+            System.out.println("Open details: " + detailsProductDTO.getName() + " " + detailsProductDTO.getModel());
+            return detailsProductDTO;
+        }
+
+
+        return new DetailsProductDTO();
     }
 
     private String getPicturePath(MultipartFile pictureFile, String username) {
