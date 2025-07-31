@@ -1,6 +1,8 @@
 package shop.AppConfiguration;
 
-import org.apache.tomcat.util.descriptor.LocalResolver;
+import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,12 +17,36 @@ import java.util.Locale;
 @Configuration
 public class I18nConfiguration {
 
+    private static final Logger logger = LoggerFactory.getLogger(I18nConfiguration.class);
+
     @Bean
     public LocaleResolver localeResolver() {
-        CookieLocaleResolver localeResolver = new CookieLocaleResolver();
-        localeResolver.setDefaultLocale(Locale.forLanguageTag("bg"));
-        localeResolver.setCookieMaxAge(Duration.ofDays(365));
-        return localeResolver;
+        return new CookieLocaleResolver() {
+            {
+                setDefaultLocale(Locale.ENGLISH);
+                setCookieMaxAge(Duration.ofDays(365));
+            }
+
+            @Override
+            public Locale resolveLocale(HttpServletRequest request) {
+                Locale locale = super.resolveLocale(request);
+
+                if (locale == null || locale.getLanguage().isEmpty()) {
+                    String headerLang = request.getHeader("Accept-Language");
+
+                    if (headerLang != null && headerLang.startsWith("bg")) {
+                        logger.info("🌍 Автоматично избран език: BG (на база Accept-Language: {})", headerLang);
+                        return Locale.forLanguageTag("bg");
+                    } else {
+                        logger.info("🌍 Автоматично избран език: EN (на база Accept-Language: {})", headerLang);
+                        return Locale.ENGLISH;
+                    }
+                }
+
+                logger.info("🌍 Езикът е зареден от cookie: {}", locale.getLanguage());
+                return locale;
+            }
+        };
     }
 
     @Bean
